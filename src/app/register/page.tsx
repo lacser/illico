@@ -28,14 +28,7 @@ export default function RegisterPage() {
           reader.readAsDataURL(profilePicture);
         });
       }
-
-      console.log('Submitting registration with:', {
-        email,
-        username,
-        hasPassword: !!password,
-        hasProfilePicture: !!profilePictureUrl
-      });
-
+      
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: {

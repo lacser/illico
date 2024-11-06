@@ -1,5 +1,15 @@
-import mongoose, { CallbackError } from 'mongoose';
+import mongoose, { CallbackError, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
+
+// Define the interface for User document
+interface IUser extends Document {
+  email: string;
+  username: string;
+  password: string;
+  profilePicture: string;
+  createdAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
 
 // Delete the existing model if it exists to force schema refresh
 if (mongoose.models.User) {
@@ -57,6 +67,7 @@ userSchema.methods.comparePassword = async function(candidatePassword: string) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;
+export type { IUser };

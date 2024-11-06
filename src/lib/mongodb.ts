@@ -16,6 +16,11 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable');
 }
 
+// Check if the URI includes the database name
+if (!MONGODB_URI.includes('/')) {
+  throw new Error('MONGODB_URI must include a database name');
+}
+
 let cached = global.mongooseGlobal;
 
 if (!cached) {

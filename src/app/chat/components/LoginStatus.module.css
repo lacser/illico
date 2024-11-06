@@ -1,0 +1,91 @@
+.loginStatus {
+    padding: 0.75rem;
+    margin: 0 0 1rem 1rem;
+}
+
+.loginStatus:hover {
+    background-color: var(--md-sys-color-surface-container);
+    border-radius: 1rem;
+}
+
+.loginStatusContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.avatarContainer {
+    position: relative;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    overflow: hidden;
+    box-shadow: var(--md-sys-elevation-level2);
+}
+
+.avatarFallback {
+    width: 100%;
+    height: 100%;
+    background-color: var(--md-sys-color-surface-container-highest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarFallbackText {
+    color: var(--md-sys-color-on-surface);
+    font-size: 0.875rem;
+}
+
+.avatarImage {
+    object-fit: cover;
+}
+
+.userDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+}
+
+.email {
+    font-size: 0.75rem;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.statusIndicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    margin-left: 0.5rem;
+}
+
+.statusOnline {
+    background-color: var(--md-sys-color-primary);
+    box-shadow: 0 0 8px var(--md-sys-color-primary-shadow);
+}
+
+.statusOffline {
+    background-color: var(--md-sys-color-error);
+}
+
+.notLoggedIn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.notLoggedText {
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface-variant);
+}

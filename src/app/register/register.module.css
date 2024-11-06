@@ -1,0 +1,185 @@
+.registerContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--md-sys-color-surface);
+  padding: 2rem;
+}
+
+.registerFormContainer {
+  max-width: 64rem;
+  width: 100%;
+  padding: 2rem;
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 2rem;
+}
+
+.divider {
+  width: 1px;
+  background-color: var(--md-sys-color-outline-variant);
+  height: 100%;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.registerHeader {
+  margin-bottom: 2rem;
+}
+
+.registerTitle {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--md-sys-color-on-surface);
+}
+
+.registerSubtitle {
+  margin-top: 1rem;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.registerForm {
+  width: 100%;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 0.5rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0 1rem;
+  height: 2.8rem;
+  font-size: 1rem;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 1.5rem;
+  color: var(--md-sys-color-on-surface);
+  transition: box-shadow 0.2s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border: 1px solid var(--md-sys-color-primary);
+  box-shadow: inset 0 0 1px 1.5px var(--md-sys-color-primary);
+  background-color: var(--md-sys-color-surface);
+}
+
+.formInput:hover {
+  border-color: var(--md-sys-color-on-surface);
+}
+
+
+.inlineFormLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  display: inline-block;
+}
+.profileImageUploadButton {
+  color: var(--md-sys-color-on-surface);
+  display: flex;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: calc(2.5rem / 2);
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+.profileImageUploadButton:hover {
+  background-color: var(--md-sys-color-secondary-container);
+}
+
+.errorMessage {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.submitButton {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-primary);
+  background-color: var(--md-sys-color-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submitButton:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.submitButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--md-sys-color-primary-container);
+}
+
+.loginLink {
+  display: block;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.loginLink:hover {
+  color: var(--md-sys-color-primary-hover);
+}
+
+@media (max-width: 768px) {
+  .registerFormContainer {
+    grid-template-columns: 1fr;
+    max-width: 28rem;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .registerTitle {
+    font-size: 2rem;
+  }
+
+  .registerSubtitle {
+    font-size: 1rem;
+  }
+}

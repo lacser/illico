@@ -1,0 +1,101 @@
+.chatHistory {
+  width: 16rem;
+  padding: 1rem 0 0 1rem;
+  overflow-y: auto;
+  background-color: transparent;
+}
+
+.sidePanelOptionsContainer {
+  margin-bottom: 1rem;
+  padding: 0 0.4rem;
+}
+
+.newChatButton {
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+  border-radius: 15px;
+  border: none;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.newChatButton:hover {
+  background-color: var(--md-sys-color-surface-container);
+}
+
+.chatList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chatItem {
+  position: relative;
+  border-radius: 2rem;
+  transition: background-color 0.2s;
+}
+
+.chatItem.active {
+  background-color: var(--md-sys-color-secondary-container);
+}
+
+.chatItem.active .chatTitle {
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.chatItem:hover:not(.active) {
+  background-color: var(--md-sys-color-secondary-container);
+}
+
+.chatButton {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+}
+
+.chatTitle {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 2rem;
+  color: var(--md-sys-color-on-surface);
+  font-size: 1rem;
+  line-height: 1.1rem;
+}
+
+
+.deleteButton {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem;
+  background-color: transparent;
+  border: none;
+  transition: opacity 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+.chatItem:hover .deleteButton {
+  opacity: 1;
+}
+
+.deleteIcon:hover {
+  transition: all 0.2s;
+  fill: var(--md-sys-color-error);
+}
+
+.deleteIcon {
+  fill: var(--md-sys-color-outline);
+}

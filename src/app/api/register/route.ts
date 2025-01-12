@@ -5,6 +5,8 @@ import InvitationCode from '@/models/InvitationCode';
 
 export async function POST(request: Request) {
   try {
+    await connectDB();
+
     const { email, username, password, invitationCode, profilePicture } = await request.json();
     
     console.log('Received registration data:', {
@@ -74,10 +76,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('Connecting to MongoDB...');
-    await connectDB();
-    console.log('Connected to MongoDB successfully');
-
     // Check if user already exists (by email or username)
     console.log('Checking for existing user...');
     const existingUser = await User.findOne({ 
@@ -104,11 +102,6 @@ export async function POST(request: Request) {
       profilePicture: profilePicture || '',
       invitationCode
     };
-
-    console.log('Attempting to create user with data:', {
-      ...userData,
-      password: '[REDACTED]'
-    });
 
     try {
       const newUser = new User(userData);

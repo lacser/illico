@@ -1,6 +1,5 @@
 .chatHistory {
-  width: 16rem;
-  padding: 1rem 0 0 1rem;
+  padding: 1rem 1rem 0;
   overflow-y: auto;
   background-color: transparent;
 }
@@ -98,4 +97,10 @@
 
 .deleteIcon {
   fill: var(--md-sys-color-outline);
+}
+
+@media (max-width: 768px) {
+  .sidePanelOptionsContainer {
+    margin-left: 2.5rem;
+  }
 }

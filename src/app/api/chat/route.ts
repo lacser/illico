@@ -16,6 +16,9 @@ export async function POST(req: Request) {
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
+      temperature: 0.8,
+      frequency_penalty: 0.1,
+      presence_penalty: 0.1,
       messages,
       stream: true,
     });

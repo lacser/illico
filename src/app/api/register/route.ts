@@ -1,25 +1,12 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
-import fs from 'fs';
-import path from 'path';
-
-interface InvitationCode {
-  code: string;
-  maxUses: number;
-  usedCount: number;
-  expiresAt: string;
-  createdBy: string;
-  isActive: boolean;
-}
-
-interface InvitationConfig {
-  enableInvitationCode: boolean;
-  invitationCodes: InvitationCode[];
-}
+import InvitationCode from '@/models/InvitationCode';
 
 export async function POST(request: Request) {
   try {
+    await connectDB();
+
     const { email, username, password, invitationCode, profilePicture } = await request.json();
     
     console.log('Received registration data:', {
@@ -36,34 +23,50 @@ export async function POST(request: Request) {
       );
     }
 
+    console.log('Validating invitation code:', invitationCode);
     // Validate invitation code
-    const invitationConfigPath = path.join(process.cwd(), 'src/config/invitation.json');
-    const invitationConfig: InvitationConfig = JSON.parse(fs.readFileSync(invitationConfigPath, 'utf8'));
+    const validCode = await InvitationCode.findOne({
+      code: invitationCode,
+      isActive: true,
+    });
 
-    if (!invitationConfig.enableInvitationCode) {
-      return NextResponse.json(
-        { error: 'Invitation code system is currently disabled' },
-        { status: 400 }
-      );
-    }
-
-    const validCode = invitationConfig.invitationCodes.find((code: InvitationCode) => 
-      code.code === invitationCode && 
-      code.isActive && 
-      code.usedCount < code.maxUses &&
-      new Date(code.expiresAt) > new Date()
-    );
+    console.log('Invitation code check result:', {
+      found: !!validCode,
+      code: invitationCode,
+      isActive: validCode?.isActive,
+      expiresAt: validCode?.expiresAt,
+      currentUses: validCode?.usedCount,
+      maxUses: validCode?.maxUses
+    });
 
     if (!validCode) {
+      console.log('Invalid invitation code: Code not found or expired');
       return NextResponse.json(
         { error: 'Invalid or expired invitation code' },
         { status: 400 }
       );
     }
 
+    if (validCode.usedCount >= validCode.maxUses) {
+      console.log('Invitation code usage limit exceeded:', {
+        code: invitationCode,
+        currentUses: validCode.usedCount,
+        maxUses: validCode.maxUses
+      });
+      return NextResponse.json(
+        { error: 'Invitation code has reached maximum usage limit' },
+        { status: 400 }
+      );
+    }
+
+    console.log('Updating invitation code usage count:', {
+      code: invitationCode,
+      previousCount: validCode.usedCount,
+      newCount: validCode.usedCount + 1
+    });
     // Update invitation code usage
     validCode.usedCount++;
-    fs.writeFileSync(invitationConfigPath, JSON.stringify(invitationConfig, null, 2));
+    await validCode.save();
 
     // Add password length validation
     if (password.length < 6) {
@@ -72,10 +75,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    console.log('Connecting to MongoDB...');
-    await connectDB();
-    console.log('Connected to MongoDB successfully');
 
     // Check if user already exists (by email or username)
     console.log('Checking for existing user...');
@@ -103,11 +102,6 @@ export async function POST(request: Request) {
       profilePicture: profilePicture || '',
       invitationCode
     };
-
-    console.log('Attempting to create user with data:', {
-      ...userData,
-      password: '[REDACTED]'
-    });
 
     try {
       const newUser = new User(userData);

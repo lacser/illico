@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [invitationCode, setInvitationCode] = useState('');
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function RegisterPage() {
           email,
           username,
           password,
+          invitationCode,
           profilePicture: profilePictureUrl
         }),
       });
@@ -118,6 +120,20 @@ export default function RegisterPage() {
                 className={Styles.formInput}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className={Styles.formGroup}>
+              <label htmlFor="invitationCode" className={Styles.formLabel}>
+                Invitation Code
+              </label>
+              <input
+                id="invitationCode"
+                name="invitationCode"
+                type="text"
+                required
+                className={Styles.formInput}
+                value={invitationCode}
+                onChange={(e) => setInvitationCode(e.target.value)}
               />
             </div>
             <div className={Styles.formGroup}>

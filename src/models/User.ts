@@ -7,6 +7,7 @@ interface IUser extends Document {
   username: string;
   password: string;
   profilePicture: string;
+  invitationCode: string;
   createdAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -38,6 +39,10 @@ const userSchema = new mongoose.Schema({
   profilePicture: {
     type: String,
     default: '',
+  },
+  invitationCode: {
+    type: String,
+    required: [true, 'Invitation code is required'],
   },
   createdAt: {
     type: Date,

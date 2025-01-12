@@ -4,12 +4,16 @@ import connectDB from '@/lib/mongodb';
 import Chat from '@/models/Chat';
 import { verifyToken } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 // Update chat messages
-export async function PUT(
-  request: Request,
-  { params }: { params: { chatId: string } }
-) {
+export async function PUT(request: Request) {
   try {
+    const { chatId } = request.url
+      .split('/')
+      .filter(Boolean)
+      .reduce((acc, curr) => ({ ...acc, chatId: curr }), { chatId: '' });
+
     await connectDB();
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
@@ -25,7 +29,7 @@ export async function PUT(
     const { messages, title } = await request.json();
 
     const chat = await Chat.findOneAndUpdate(
-      { _id: params.chatId, userId: payload.userId },
+      { _id: chatId, userId: payload.userId },
       { messages, title },
       { new: true }
     );
@@ -45,11 +49,13 @@ export async function PUT(
 }
 
 // Delete chat
-export async function DELETE(
-  request: Request,
-  { params }: { params: { chatId: string } }
-) {
+export async function DELETE(request: Request) {
   try {
+    const { chatId } = request.url
+      .split('/')
+      .filter(Boolean)
+      .reduce((acc, curr) => ({ ...acc, chatId: curr }), { chatId: '' });
+
     await connectDB();
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
@@ -63,7 +69,7 @@ export async function DELETE(
     }
 
     const chat = await Chat.findOneAndDelete({
-      _id: params.chatId,
+      _id: chatId,
       userId: payload.userId
     });
 

@@ -1,10 +1,26 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
+import fs from 'fs';
+import path from 'path';
+
+interface InvitationCode {
+  code: string;
+  maxUses: number;
+  usedCount: number;
+  expiresAt: string;
+  createdBy: string;
+  isActive: boolean;
+}
+
+interface InvitationConfig {
+  enableInvitationCode: boolean;
+  invitationCodes: InvitationCode[];
+}
 
 export async function POST(request: Request) {
   try {
-    const { email, username, password, profilePicture } = await request.json();
+    const { email, username, password, invitationCode, profilePicture } = await request.json();
     
     console.log('Received registration data:', {
       email,
@@ -13,12 +29,41 @@ export async function POST(request: Request) {
       hasProfilePicture: !!profilePicture
     });
 
-    if (!email || !password || !username) {
+    if (!email || !password || !username || !invitationCode) {
       return NextResponse.json(
-        { error: 'Email, username and password are required' },
+        { error: 'Email, username, password and invitation code are required' },
         { status: 400 }
       );
     }
+
+    // Validate invitation code
+    const invitationConfigPath = path.join(process.cwd(), 'src/config/invitation.json');
+    const invitationConfig: InvitationConfig = JSON.parse(fs.readFileSync(invitationConfigPath, 'utf8'));
+
+    if (!invitationConfig.enableInvitationCode) {
+      return NextResponse.json(
+        { error: 'Invitation code system is currently disabled' },
+        { status: 400 }
+      );
+    }
+
+    const validCode = invitationConfig.invitationCodes.find((code: InvitationCode) => 
+      code.code === invitationCode && 
+      code.isActive && 
+      code.usedCount < code.maxUses &&
+      new Date(code.expiresAt) > new Date()
+    );
+
+    if (!validCode) {
+      return NextResponse.json(
+        { error: 'Invalid or expired invitation code' },
+        { status: 400 }
+      );
+    }
+
+    // Update invitation code usage
+    validCode.usedCount++;
+    fs.writeFileSync(invitationConfigPath, JSON.stringify(invitationConfig, null, 2));
 
     // Add password length validation
     if (password.length < 6) {
@@ -55,7 +100,8 @@ export async function POST(request: Request) {
       email,
       username,
       password,
-      profilePicture: profilePicture || ''
+      profilePicture: profilePicture || '',
+      invitationCode
     };
 
     console.log('Attempting to create user with data:', {

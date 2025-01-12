@@ -47,6 +47,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isNewChat, setIsNewChat] = useState(false);
   const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const router = useRouter();
@@ -92,12 +93,14 @@ export default function ChatPage() {
     setCurrentChatId(null);
     setIsNewChat(true);
     setCurrentMessages([]);
+    setIsMobileMenuOpen(false);
   };
 
   const handleChatSelect = (chat: Chat) => {
     setCurrentChatId(chat._id);
     setIsNewChat(false);
     setCurrentMessages(chat.messages.map(msg => ({ ...msg, isComplete: true })));
+    setIsMobileMenuOpen(false);
   };
 
   const handleDeleteChat = async (chatId: string) => {
@@ -276,7 +279,16 @@ export default function ChatPage() {
 
   return (
     <div className={styles.chatContainer}>
-      <div className={styles.leftSidePanel}>
+      <button 
+        className={styles.menuToggle}
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+          <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+        </svg>
+      </button>
+      <div className={`${styles.leftSidePanel} ${isMobileMenuOpen ? styles.open : ''}`}>
         <ChatHistory
           chats={chats}
           currentChatId={currentChatId}

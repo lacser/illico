@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 300px;
+  min-width: 300px;
+  transition: transform 0.3s ease;
 }
 
 .chatContainer {
@@ -9,6 +12,7 @@
   height: 100vh;
   background-color: var(--md-sys-color-surface);
   overflow: hidden;
+  position: relative;
 }
 
 .chatMain {
@@ -16,7 +20,7 @@
   display: flex;
   flex-direction: column;
   background-color: var(--md-sys-color-surface-container-lowest);
-  margin: 15px;
+  margin: 15px 15px 15px 0;
   border-radius: 2rem;
   position: relative;
   overflow: hidden;
@@ -301,4 +305,116 @@
   color: var(--md-sys-color-on-surface-variant);
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.menuToggle {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 20;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-outline);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .leftSidePanel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+    background-color: var(--md-sys-color-surface);
+    transform: translateX(-100%);
+  }
+
+  .leftSidePanel.open {
+    transform: translateX(0);
+  }
+
+  .chatMain {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .messagesContainer {
+    padding: 1rem;
+  }
+
+  .messageBubble {
+    max-width: 85%;
+  }
+
+  .emptyChat {
+    font-size: 1.75rem;
+    margin-top: calc(90vh / 2 - 6rem);
+  }
+
+  .inputContainerMiddle,
+  .inputContainerBottom {
+    margin: 0 15px;
+    width: calc(100% - 30px);
+  }
+
+  .inputContainerBottom {
+    bottom: 15px;
+  }
+
+  .chatInput {
+    padding: 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .sendButton {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .sendButton svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .leftSidePanel {
+    width: 100%;
+  }
+
+  .messagesContainer {
+    padding: 0.75rem;
+  }
+
+  .messageBubble {
+    max-width: 90%;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .inputContainerMiddle,
+  .inputContainerBottom {
+    margin: 0 10px;
+    width: calc(100% - 25px);
+  }
+
+  .inputContainerBottom {
+    transform: translateX(-52%);
+  }
+
+  .chatInput {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
 }

@@ -23,7 +23,7 @@ const MessageContent = ({ content, isComplete }: { content: string, isComplete?:
   if (!isComplete) {
     return <div className={styles.streamingContent}>{content}</div>;
   }
-  
+
   return (
     <Markdown options={{
       forceBlock: true,
@@ -50,6 +50,8 @@ export default function ChatPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const upperInputBoxRef = useRef(null);
+  const bottomInputBoxRef = useRef(null);
   const router = useRouter();
 
   const loadChats = useCallback(async () => {
@@ -130,6 +132,33 @@ export default function ChatPage() {
       console.error('Error deleting chat:', error);
     }
   };
+
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>, ref: React.RefObject<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    const textarea = ref.current as HTMLTextAreaElement | null;
+    if (textarea) {
+      const htmlElement = document.documentElement;
+      const fontSize = window.getComputedStyle(htmlElement).fontSize;
+      const REM = parseFloat(fontSize);
+
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight > 5.6*REM ? 5.6*REM : textarea.scrollHeight}px`;
+
+      if (textarea.scrollHeight >= 4 * REM) {
+        textarea.style.borderRadius = "1rem";
+        textarea.style.padding = "1rem";
+      } else {
+        textarea.style.borderRadius = "2rem";
+        textarea.style.padding = "0.9rem 1.5rem";
+      }
+
+      if (textarea.scrollHeight >= 6 * REM) {
+        textarea.style.overflow = "auto";
+      } else {
+        textarea.style.overflow = "hidden";
+      }
+    }
+  }
 
   const createNewChat = async (firstMessage: Message) => {
     try {
@@ -279,13 +308,13 @@ export default function ChatPage() {
 
   return (
     <div className={styles.chatContainer}>
-      <button 
+      <button
         className={styles.menuToggle}
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle menu"
       >
         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-          <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+          <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
         </svg>
       </button>
       <div className={`${styles.leftSidePanel} ${isMobileMenuOpen ? styles.open : ''}`}>
@@ -310,10 +339,12 @@ export default function ChatPage() {
                 <div className={styles.inputContainerMiddle} style={{ display: currentChatId ? 'none' : '' }}>
                   <form onSubmit={handleSubmit} className={styles.inputForm}>
                     <div className={styles.inputWrapper}>
-                      <input
-                        type="text"
+                      <textarea
+                        wrap="hard"
+                        ref={upperInputBoxRef}
+                        rows={1}
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => handleInput(e, upperInputBoxRef)}
                         placeholder="Message illico..."
                         className={styles.chatInput}
                         disabled={isLoading}
@@ -352,10 +383,12 @@ export default function ChatPage() {
         <div className={styles.inputContainerBottom} style={{ display: currentChatId ? '' : 'none' }}>
           <form onSubmit={handleSubmit} className={styles.inputForm}>
             <div className={styles.inputWrapper}>
-              <input
-                type="text"
+              <textarea
+                wrap="hard"
+                ref={bottomInputBoxRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                rows={1}
+                onChange={(e) => handleInput(e, bottomInputBoxRef)}
                 placeholder="Message illico..."
                 className={styles.chatInput}
                 disabled={isLoading}

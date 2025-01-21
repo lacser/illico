@@ -229,6 +229,7 @@
   height: 3rem;
   line-height: 1.2rem;
   font-size: 1rem;
+  font-family: "Noto Sans", "Noto Sans SC", sans-serif;
   border: none;
   border-radius: 2rem;
   background-color: var(--md-sys-color-secondary-container);

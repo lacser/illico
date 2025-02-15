@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.5.1",
     "bcryptjs": "^2.4.3",
     "jose": "^5.9.6",
     "markdown-to-jsx": "^7.5.0",
@@ -17,11 +18,7 @@
     "openai": "^4.68.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-markdown": "^9.0.1",
-    "remark": "^15.0.1",
-    "remark-parse": "^11.0.0",
-    "remark-react": "^9.0.1",
-    "unified": "^11.0.5"
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -31,7 +28,6 @@
     "@types/webpack": "^5.28.5",
     "eslint": "^8",
     "eslint-config-next": "15.0.1",
-    "postcss": "^8",
     "typescript": "^5"
   }
 }

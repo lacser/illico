@@ -2,6 +2,16 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Markdown from 'markdown-to-jsx';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { 
+  setIsLoading, 
+  setIsNewChat, 
+  setCurrentChatId, 
+  setChats,
+  addChat,
+  updateChat,
+  deleteChat
+} from '@/store/slices/chatSlice';
 import ChatHistory from './components/ChatHistory';
 import LoginStatus from './components/LoginStatus';
 import styles from './chat.module.css';
@@ -41,11 +51,9 @@ const MessageContent = ({ content, isComplete }: { content: string, isComplete?:
 };
 
 export default function ChatPage() {
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { chats, currentChatId, isLoading, isNewChat } = useAppSelector(state => state.chat);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isNewChat, setIsNewChat] = useState(false);
   const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -64,15 +72,15 @@ export default function ChatPage() {
       if (!response.ok) throw new Error('Failed to fetch chats');
 
       const data = await response.json();
-      setChats(data);
+      dispatch(setChats(data));
       if (data.length > 0 && !currentChatId && !isNewChat) {
-        setCurrentChatId(null);
+        dispatch(setCurrentChatId(null));
         setCurrentMessages([]);
       }
     } catch (error) {
       console.error('Error loading chats:', error);
     }
-  }, [currentChatId, isNewChat, router]);
+  }, [currentChatId, isNewChat, router, dispatch]);
 
   useEffect(() => {
     if (!isNewChat && currentChatId) {
@@ -92,15 +100,15 @@ export default function ChatPage() {
   }, [currentMessages]);
 
   const handleNewChat = () => {
-    setCurrentChatId(null);
-    setIsNewChat(true);
+    dispatch(setCurrentChatId(null));
+    dispatch(setIsNewChat(true));
     setCurrentMessages([]);
     setIsMobileMenuOpen(false);
   };
 
   const handleChatSelect = (chat: Chat) => {
-    setCurrentChatId(chat._id);
-    setIsNewChat(false);
+    dispatch(setCurrentChatId(chat._id));
+    dispatch(setIsNewChat(false));
     setCurrentMessages(chat.messages.map(msg => ({ ...msg, isComplete: true })));
     setIsMobileMenuOpen(false);
   };
@@ -117,12 +125,12 @@ export default function ChatPage() {
       }
       if (!response.ok) throw new Error('Failed to delete chat');
 
-      setChats(prev => prev.filter(chat => chat._id !== chatId));
+      dispatch(deleteChat(chatId));
 
       if (currentChatId === chatId) {
         const remainingChats = chats.filter(chat => chat._id !== chatId);
         if (remainingChats.length > 0) {
-          setCurrentChatId(remainingChats[0]._id);
+          dispatch(setCurrentChatId(remainingChats[0]._id));
           setCurrentMessages(remainingChats[0].messages.map(msg => ({ ...msg, isComplete: true })));
         } else {
           handleNewChat();
@@ -180,9 +188,9 @@ export default function ChatPage() {
       if (!response.ok) throw new Error('Failed to create chat');
 
       const newChat = await response.json();
-      setChats(prev => [newChat, ...prev]);
-      setCurrentChatId(newChat._id);
-      setIsNewChat(false);
+      dispatch(addChat(newChat));
+      dispatch(setCurrentChatId(newChat._id));
+      dispatch(setIsNewChat(false));
       setCurrentMessages([{ ...firstMessage, isComplete: true }]);
       return newChat._id;
     } catch (error) {
@@ -216,9 +224,7 @@ export default function ChatPage() {
       if (!response.ok) throw new Error('Failed to update chat');
 
       const updatedChat = await response.json();
-      setChats(prev => prev.map(chat =>
-        chat._id === chatId ? updatedChat : chat
-      ));
+      dispatch(updateChat(updatedChat));
       setCurrentMessages(messages);
 
       if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -243,7 +249,7 @@ export default function ChatPage() {
     };
 
     setInput('');
-    setIsLoading(true);
+    dispatch(setIsLoading(true));
 
     try {
       let chatId = currentChatId;
@@ -302,7 +308,7 @@ export default function ChatPage() {
     } catch (error) {
       console.error('Error:', error);
     } finally {
-      setIsLoading(false);
+      dispatch(setIsLoading(false));
     }
   };
 
@@ -345,7 +351,7 @@ export default function ChatPage() {
                         rows={1}
                         value={input}
                         onChange={(e) => handleInput(e, upperInputBoxRef)}
-                        placeholder="Message illico..."
+                        placeholder="Send a message"
                         className={styles.chatInput}
                         disabled={isLoading}
                       />
@@ -384,12 +390,13 @@ export default function ChatPage() {
           <form onSubmit={handleSubmit} className={styles.inputForm}>
             <div className={styles.inputWrapper}>
               <textarea
+                suppressHydrationWarning
                 wrap="hard"
                 ref={bottomInputBoxRef}
                 value={input}
                 rows={1}
                 onChange={(e) => handleInput(e, bottomInputBoxRef)}
-                placeholder="Message illico..."
+                placeholder="Send a message"
                 className={styles.chatInput}
                 disabled={isLoading}
               />

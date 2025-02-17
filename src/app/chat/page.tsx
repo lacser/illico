@@ -1,23 +1,25 @@
-'use client';
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Markdown from 'markdown-to-jsx';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { 
-  setIsLoading, 
-  setIsNewChat, 
-  setCurrentChatId, 
+"use client";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import ChatInput from "./components/ChatInput";
+import Markdown from "markdown-to-jsx";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  setIsLoading,
+  setIsNewChat,
+  setCurrentChatId,
   setChats,
   addChat,
   updateChat,
-  deleteChat
-} from '@/store/slices/chatSlice';
-import ChatHistory from './components/ChatHistory';
-import LoginStatus from './components/LoginStatus';
-import styles from './chat.module.css';
+  deleteChat,
+} from "@/store/slices/chatSlice";
+import ChatHistory from "./components/ChatHistory";
+import LoginStatus from "./components/LoginStatus";
+import styles from "./chat.module.css";
+import IconsProvider from "../components/iconsProvider";
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   isComplete?: boolean;
 }
@@ -29,22 +31,30 @@ interface Chat {
   createdAt: string;
 }
 
-const MessageContent = ({ content, isComplete }: { content: string, isComplete?: boolean }) => {
+const MessageContent = ({
+  content,
+  isComplete,
+}: {
+  content: string;
+  isComplete?: boolean;
+}) => {
   if (!isComplete) {
     return <div className={styles.streamingContent}>{content}</div>;
   }
 
   return (
-    <Markdown options={{
-      forceBlock: true,
-      overrides: {
-        code: {
-          props: {
-            className: styles.code
-          }
-        }
-      }
-    }}>
+    <Markdown
+      options={{
+        forceBlock: true,
+        overrides: {
+          code: {
+            props: {
+              className: styles.code,
+            },
+          },
+        },
+      }}
+    >
       {content}
     </Markdown>
   );
@@ -52,24 +62,23 @@ const MessageContent = ({ content, isComplete }: { content: string, isComplete?:
 
 export default function ChatPage() {
   const dispatch = useAppDispatch();
-  const { chats, currentChatId, isLoading, isNewChat } = useAppSelector(state => state.chat);
-  const [input, setInput] = useState('');
+  const { chats, currentChatId, isLoading, isNewChat } = useAppSelector(
+    (state) => state.chat
+  );
   const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const upperInputBoxRef = useRef(null);
-  const bottomInputBoxRef = useRef(null);
   const router = useRouter();
 
   const loadChats = useCallback(async () => {
     try {
-      const response = await fetch('/api/chats');
+      const response = await fetch("/api/chats");
       if (response.status === 401) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
-      if (!response.ok) throw new Error('Failed to fetch chats');
+      if (!response.ok) throw new Error("Failed to fetch chats");
 
       const data = await response.json();
       dispatch(setChats(data));
@@ -78,15 +87,17 @@ export default function ChatPage() {
         setCurrentMessages([]);
       }
     } catch (error) {
-      console.error('Error loading chats:', error);
+      console.error("Error loading chats:", error);
     }
   }, [currentChatId, isNewChat, router, dispatch]);
 
   useEffect(() => {
     if (!isNewChat && currentChatId) {
-      const chat = chats.find(c => c._id === currentChatId);
+      const chat = chats.find((c) => c._id === currentChatId);
       if (chat) {
-        setCurrentMessages(chat.messages.map(msg => ({ ...msg, isComplete: true })));
+        setCurrentMessages(
+          chat.messages.map((msg) => ({ ...msg, isComplete: true }))
+        );
       }
     }
   }, [currentChatId, chats, isNewChat]);
@@ -96,7 +107,7 @@ export default function ChatPage() {
   }, [loadChats]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
 
   const handleNewChat = () => {
@@ -109,83 +120,63 @@ export default function ChatPage() {
   const handleChatSelect = (chat: Chat) => {
     dispatch(setCurrentChatId(chat._id));
     dispatch(setIsNewChat(false));
-    setCurrentMessages(chat.messages.map(msg => ({ ...msg, isComplete: true })));
+    setCurrentMessages(
+      chat.messages.map((msg) => ({ ...msg, isComplete: true }))
+    );
     setIsMobileMenuOpen(false);
   };
 
   const handleDeleteChat = async (chatId: string) => {
     try {
       const response = await fetch(`/api/chats/${chatId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.status === 401) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
-      if (!response.ok) throw new Error('Failed to delete chat');
+      if (!response.ok) throw new Error("Failed to delete chat");
 
       dispatch(deleteChat(chatId));
 
       if (currentChatId === chatId) {
-        const remainingChats = chats.filter(chat => chat._id !== chatId);
+        const remainingChats = chats.filter((chat) => chat._id !== chatId);
         if (remainingChats.length > 0) {
           dispatch(setCurrentChatId(remainingChats[0]._id));
-          setCurrentMessages(remainingChats[0].messages.map(msg => ({ ...msg, isComplete: true })));
+          setCurrentMessages(
+            remainingChats[0].messages.map((msg) => ({
+              ...msg,
+              isComplete: true,
+            }))
+          );
         } else {
           handleNewChat();
         }
       }
     } catch (error) {
-      console.error('Error deleting chat:', error);
+      console.error("Error deleting chat:", error);
     }
   };
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>, ref: React.RefObject<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-    const textarea = ref.current as HTMLTextAreaElement | null;
-    if (textarea) {
-      const htmlElement = document.documentElement;
-      const fontSize = window.getComputedStyle(htmlElement).fontSize;
-      const REM = parseFloat(fontSize);
-
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight > 5.6*REM ? 5.6*REM : textarea.scrollHeight}px`;
-
-      if (textarea.scrollHeight >= 4 * REM) {
-        textarea.style.borderRadius = "1rem";
-        textarea.style.padding = "1rem";
-      } else {
-        textarea.style.borderRadius = "2rem";
-        textarea.style.padding = "0.9rem 1.5rem";
-      }
-
-      if (textarea.scrollHeight >= 6 * REM) {
-        textarea.style.overflow = "auto";
-      } else {
-        textarea.style.overflow = "hidden";
-      }
-    }
-  }
-
   const createNewChat = async (firstMessage: Message) => {
     try {
-      const response = await fetch('/api/chats', {
-        method: 'POST',
+      const response = await fetch("/api/chats", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: firstMessage.content.substring(0, 30) + '...',
-          messages: [firstMessage]
+          title: firstMessage.content.substring(0, 30) + "...",
+          messages: [firstMessage],
         }),
       });
 
       if (response.status === 401) {
-        router.push('/login');
+        router.push("/login");
         return null;
       }
-      if (!response.ok) throw new Error('Failed to create chat');
+      if (!response.ok) throw new Error("Failed to create chat");
 
       const newChat = await response.json();
       dispatch(addChat(newChat));
@@ -194,61 +185,60 @@ export default function ChatPage() {
       setCurrentMessages([{ ...firstMessage, isComplete: true }]);
       return newChat._id;
     } catch (error) {
-      console.error('Error creating chat:', error);
+      console.error("Error creating chat:", error);
       return null;
     }
   };
 
   const updateCurrentChat = async (chatId: string, messages: Message[]) => {
     if (!chatId) {
-      console.error('No chat ID provided');
+      console.error("No chat ID provided");
       return;
     }
 
     try {
       const response = await fetch(`/api/chats/${chatId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           messages,
-          title: messages[0]?.content.substring(0, 30) + '...' || 'New Chat'
+          title: messages[0]?.content.substring(0, 30) + "..." || "New Chat",
         }),
       });
 
       if (response.status === 401) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
-      if (!response.ok) throw new Error('Failed to update chat');
+      if (!response.ok) throw new Error("Failed to update chat");
 
       const updatedChat = await response.json();
       dispatch(updateChat(updatedChat));
       setCurrentMessages(messages);
 
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({
-          chatId,
-          message: messages[messages.length - 1]
-        }));
+        wsRef.current.send(
+          JSON.stringify({
+            chatId,
+            message: messages[messages.length - 1],
+          })
+        );
       }
     } catch (error) {
-      console.error('Error updating chat:', error);
+      console.error("Error updating chat:", error);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const handleSubmit = async (text: string) => {
+    if (!text.trim() || isLoading) return;
 
     const userMessage: Message = {
-      role: 'user',
-      content: input.trim(),
-      isComplete: true
+      role: "user",
+      content: text.trim(),
+      isComplete: true,
     };
-
-    setInput('');
     dispatch(setIsLoading(true));
 
     try {
@@ -257,33 +247,33 @@ export default function ChatPage() {
 
       if (isNewChat || !chatId) {
         chatId = await createNewChat(userMessage);
-        if (!chatId) throw new Error('Failed to create new chat');
+        if (!chatId) throw new Error("Failed to create new chat");
         updatedMessages = [userMessage];
       } else {
-        if (!chatId) throw new Error('No current chat ID');
+        if (!chatId) throw new Error("No current chat ID");
         updatedMessages = [...currentMessages, userMessage];
         await updateCurrentChat(chatId, updatedMessages);
       }
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: updatedMessages
+          messages: updatedMessages,
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch response');
+      if (!response.ok) throw new Error("Failed to fetch response");
 
       const reader = response.body?.getReader();
-      if (!reader) throw new Error('No reader available');
+      if (!reader) throw new Error("No reader available");
 
       const assistantMessage: Message = {
-        role: 'assistant',
-        content: '',
-        isComplete: false
+        role: "assistant",
+        content: "",
+        isComplete: false,
       };
 
       let newMessages: Message[] = [...updatedMessages];
@@ -303,10 +293,10 @@ export default function ChatPage() {
         setCurrentMessages(newMessages);
       }
 
-      if (!chatId) throw new Error('No current chat ID');
+      if (!chatId) throw new Error("No current chat ID");
       await updateCurrentChat(chatId, newMessages);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       dispatch(setIsLoading(false));
     }
@@ -319,11 +309,15 @@ export default function ChatPage() {
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-          <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
-        </svg>
+        <IconsProvider iconSize="24px" fill={0} grade={0} weight={400}>
+          menu
+        </IconsProvider>
       </button>
-      <div className={`${styles.leftSidePanel} ${isMobileMenuOpen ? styles.open : ''}`}>
+      <div
+        className={`${styles.leftSidePanel} ${
+          isMobileMenuOpen ? styles.open : ""
+        }`}
+      >
         <ChatHistory
           chats={chats}
           currentChatId={currentChatId}
@@ -337,35 +331,14 @@ export default function ChatPage() {
       <div className={styles.chatMain}>
         <div className={styles.messagesContainer}>
           <div className={styles.messagesWrapper}>
-            {(!currentMessages.length || isNewChat) ? (
+            {!currentMessages.length || isNewChat ? (
               <div>
-                <h1 className={styles.emptyChat}>
-                  What can I help with?
-                </h1>
-                <div className={styles.inputContainerMiddle} style={{ display: currentChatId ? 'none' : '' }}>
-                  <form onSubmit={handleSubmit} className={styles.inputForm}>
-                    <div className={styles.inputWrapper}>
-                      <textarea
-                        wrap="hard"
-                        ref={upperInputBoxRef}
-                        rows={1}
-                        value={input}
-                        onChange={(e) => handleInput(e, upperInputBoxRef)}
-                        placeholder="Send a message"
-                        className={styles.chatInput}
-                        disabled={isLoading}
-                      />
-                      <button
-                        type="submit"
-                        className={styles.sendButton}
-                        disabled={isLoading}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--md-sys-color-on-tertiary-container)">
-                          <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
-                        </svg>
-                      </button>
-                    </div>
-                  </form>
+                <h1 className={styles.emptyChat}>What can I help with?</h1>
+                <div
+                  className={styles.inputContainerMiddle}
+                  style={{ display: currentChatId ? "none" : "" }}
+                >
+                  <ChatInput onSubmit={handleSubmit} />
                 </div>
               </div>
             ) : (
@@ -376,7 +349,10 @@ export default function ChatPage() {
                     className={`${styles.message} ${styles[msg.role]}`}
                   >
                     <div className={styles.messageBubble}>
-                      <MessageContent content={msg.content} isComplete={msg.isComplete} />
+                      <MessageContent
+                        content={msg.content}
+                        isComplete={msg.isComplete}
+                      />
                     </div>
                   </div>
                 ))}
@@ -386,31 +362,11 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <div className={styles.inputContainerBottom} style={{ display: currentChatId ? '' : 'none' }}>
-          <form onSubmit={handleSubmit} className={styles.inputForm}>
-            <div className={styles.inputWrapper}>
-              <textarea
-                suppressHydrationWarning
-                wrap="hard"
-                ref={bottomInputBoxRef}
-                value={input}
-                rows={1}
-                onChange={(e) => handleInput(e, bottomInputBoxRef)}
-                placeholder="Send a message"
-                className={styles.chatInput}
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                className={styles.sendButton}
-                disabled={isLoading}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--md-sys-color-on-tertiary-container)">
-                  <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
-                </svg>
-              </button>
-            </div>
-          </form>
+        <div
+          className={styles.inputContainerBottom}
+          style={{ display: currentChatId ? "" : "none" }}
+        >
+          <ChatInput onSubmit={handleSubmit} hasBottomShadow />
         </div>
       </div>
     </div>

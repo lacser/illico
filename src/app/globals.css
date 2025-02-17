@@ -49,7 +49,7 @@
   --md-sys-color-surface-container: rgb(238 239 227);
   --md-sys-color-surface-container-high: rgb(232 233 222);
   --md-sys-color-surface-container-highest: rgb(226 227 216);
-  --md-sys-elevation-level0: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+  --md-sys-chat-input-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   --md-sys-elevation-level1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.15);
   --md-sys-elevation-level2: 0 2px 4px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.15);
   --md-sys-elevation-level3: 0 3px 6px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.15);
@@ -122,6 +122,29 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  src: url('/icons/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf')
+    format('truetype');
+  font-display: block;
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  display: inline-block;
+  white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -131,7 +154,6 @@ body {
 
 * {
   box-sizing: border-box;
-  /* Custom scrollbar styles */
   ::-webkit-scrollbar {
     width: 12px;
   }

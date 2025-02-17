@@ -92,11 +92,11 @@
 
 .deleteIcon:hover {
   transition: all 0.2s;
-  fill: var(--md-sys-color-error);
+  color: var(--md-sys-color-error);
 }
 
 .deleteIcon {
-  fill: var(--md-sys-color-outline);
+  color: var(--md-sys-color-outline);
 }
 
 @media (max-width: 768px) {

@@ -19,18 +19,28 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
 
     const { left, width } = messagesContainerMeasurements;
     const screenWidth = window.innerWidth;
-    const remValue = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const remValue = parseFloat(
+      getComputedStyle(document.documentElement).fontSize
+    );
 
     if (screenWidth < 480) {
       showCenteredInput = false;
       bottom = "1rem";
-      computedWidth = width - remValue*2;
+      computedWidth = width - remValue * 2;
     } else if (screenWidth < 768) {
       bottom = "1rem";
-      computedWidth = width - remValue*2;
+      if (showCenteredInput) {
+        computedWidth = width - remValue * 6;
+      } else {
+        computedWidth = width - remValue * 2;
+      }
     } else {
       bottom = "calc(1.5rem + 15px)";
-      computedWidth = width - remValue*3;
+      if (showCenteredInput) {
+        computedWidth = width - remValue * 10;
+      } else {
+        computedWidth = width - remValue * 3;
+      }
     }
 
     const containerCenter = left + width / 2;

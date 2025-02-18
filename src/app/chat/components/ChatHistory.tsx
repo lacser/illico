@@ -1,6 +1,15 @@
 "use client";
 import Styles from "./ChatHistory.module.css";
 import IconsProvider from "../../components/iconsProvider";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { handleDeleteChat } from "../utils/handleDeleteChat";
+import {
+  setIsNewChat,
+  setCurrentChatId,
+  setCurrentMessages,
+} from "@/store/slices/chatSlice";
+import { setIsMobileMenuOpen } from "@/store/slices/uiSlice";
 
 interface Message {
   role: "user" | "assistant";
@@ -16,22 +25,29 @@ interface Chat {
 
 interface ChatHistoryProps {
   chats: Chat[];
-  currentChatId: string | null;
-  onChatSelect: (chat: Chat) => void;
   onNewChat: () => void;
-  onDeleteChat: (chatId: string) => void;
 }
 
 export default function ChatHistory({
   chats,
-  currentChatId,
-  onChatSelect,
   onNewChat,
-  onDeleteChat,
 }: ChatHistoryProps) {
-  const handleDelete = (e: React.MouseEvent, chatId: string) => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const currentChatId = useAppSelector((state) => state.chat.currentChatId);
+
+  const handleDelete = async (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    onDeleteChat(chatId);
+    await handleDeleteChat(chatId, currentChatId, chats, dispatch, router);
+  };
+
+  const handleChatSelect = (chat: Chat) => {
+    dispatch(setCurrentChatId(chat._id));
+    dispatch(setIsNewChat(false));
+    dispatch(setCurrentMessages(
+      chat.messages.map((msg) => ({ ...msg, isComplete: true }))
+    ));
+    dispatch(setIsMobileMenuOpen(false));
   };
 
   return (
@@ -53,7 +69,7 @@ export default function ChatHistory({
             }`}
           >
             <button
-              onClick={() => onChatSelect(chat)}
+              onClick={() => handleChatSelect(chat)}
               className={Styles.chatButton}
             >
               <div className={Styles.chatTitle}>{chat.title}</div>

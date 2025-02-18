@@ -18,6 +18,7 @@ interface ChatState {
   isNewChat: boolean;
   currentChatId: string | null;
   chats: Chat[];
+  currentMessages: Message[];
 }
 
 const initialState: ChatState = {
@@ -25,6 +26,7 @@ const initialState: ChatState = {
   isNewChat: false,
   currentChatId: null,
   chats: [],
+  currentMessages: [],
 };
 
 const chatSlice = createSlice({
@@ -54,6 +56,9 @@ const chatSlice = createSlice({
     deleteChat: (state, action: PayloadAction<string>) => {
       state.chats = state.chats.filter(chat => chat._id !== action.payload);
     },
+    setCurrentMessages: (state, action: PayloadAction<Message[]>) => {
+      state.currentMessages = action.payload;
+    },
   },
 });
 
@@ -65,6 +70,7 @@ export const {
   addChat,
   updateChat,
   deleteChat,
+  setCurrentMessages,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import ChatInput from "./components/ChatInput";
 import Markdown from "markdown-to-jsx";
@@ -11,8 +11,9 @@ import {
   setChats,
   addChat,
   updateChat,
-  deleteChat,
+  setCurrentMessages,
 } from "@/store/slices/chatSlice";
+import { setIsMobileMenuOpen } from "@/store/slices/uiSlice";
 import ChatHistory from "./components/ChatHistory";
 import LoginStatus from "./components/LoginStatus";
 import styles from "./chat.module.css";
@@ -22,13 +23,6 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   isComplete?: boolean;
-}
-
-interface Chat {
-  _id: string;
-  title: string;
-  messages: Message[];
-  createdAt: string;
 }
 
 const MessageContent = ({
@@ -62,11 +56,10 @@ const MessageContent = ({
 
 export default function ChatPage() {
   const dispatch = useAppDispatch();
-  const { chats, currentChatId, isLoading, isNewChat } = useAppSelector(
+  const { chats, currentChatId, isLoading, isNewChat, currentMessages } = useAppSelector(
     (state) => state.chat
   );
-  const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const router = useRouter();
@@ -84,7 +77,7 @@ export default function ChatPage() {
       dispatch(setChats(data));
       if (data.length > 0 && !currentChatId && !isNewChat) {
         dispatch(setCurrentChatId(null));
-        setCurrentMessages([]);
+        dispatch(setCurrentMessages([]));
       }
     } catch (error) {
       console.error("Error loading chats:", error);
@@ -95,12 +88,12 @@ export default function ChatPage() {
     if (!isNewChat && currentChatId) {
       const chat = chats.find((c) => c._id === currentChatId);
       if (chat) {
-        setCurrentMessages(
+        dispatch(setCurrentMessages(
           chat.messages.map((msg) => ({ ...msg, isComplete: true }))
-        );
+        ));
       }
     }
-  }, [currentChatId, chats, isNewChat]);
+  }, [currentChatId, chats, isNewChat, dispatch]);
 
   useEffect(() => {
     loadChats();
@@ -113,50 +106,8 @@ export default function ChatPage() {
   const handleNewChat = () => {
     dispatch(setCurrentChatId(null));
     dispatch(setIsNewChat(true));
-    setCurrentMessages([]);
-    setIsMobileMenuOpen(false);
-  };
-
-  const handleChatSelect = (chat: Chat) => {
-    dispatch(setCurrentChatId(chat._id));
-    dispatch(setIsNewChat(false));
-    setCurrentMessages(
-      chat.messages.map((msg) => ({ ...msg, isComplete: true }))
-    );
-    setIsMobileMenuOpen(false);
-  };
-
-  const handleDeleteChat = async (chatId: string) => {
-    try {
-      const response = await fetch(`/api/chats/${chatId}`, {
-        method: "DELETE",
-      });
-
-      if (response.status === 401) {
-        router.push("/login");
-        return;
-      }
-      if (!response.ok) throw new Error("Failed to delete chat");
-
-      dispatch(deleteChat(chatId));
-
-      if (currentChatId === chatId) {
-        const remainingChats = chats.filter((chat) => chat._id !== chatId);
-        if (remainingChats.length > 0) {
-          dispatch(setCurrentChatId(remainingChats[0]._id));
-          setCurrentMessages(
-            remainingChats[0].messages.map((msg) => ({
-              ...msg,
-              isComplete: true,
-            }))
-          );
-        } else {
-          handleNewChat();
-        }
-      }
-    } catch (error) {
-      console.error("Error deleting chat:", error);
-    }
+    dispatch(setCurrentMessages([]));
+    dispatch(setIsMobileMenuOpen(false));
   };
 
   const createNewChat = async (firstMessage: Message) => {
@@ -182,7 +133,7 @@ export default function ChatPage() {
       dispatch(addChat(newChat));
       dispatch(setCurrentChatId(newChat._id));
       dispatch(setIsNewChat(false));
-      setCurrentMessages([{ ...firstMessage, isComplete: true }]);
+      dispatch(setCurrentMessages([{ ...firstMessage, isComplete: true }]));
       return newChat._id;
     } catch (error) {
       console.error("Error creating chat:", error);
@@ -216,7 +167,7 @@ export default function ChatPage() {
 
       const updatedChat = await response.json();
       dispatch(updateChat(updatedChat));
-      setCurrentMessages(messages);
+      dispatch(setCurrentMessages(messages));
 
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(
@@ -282,7 +233,7 @@ export default function ChatPage() {
         if (done) {
           assistantMessage.isComplete = true;
           newMessages = [...updatedMessages, { ...assistantMessage }];
-          setCurrentMessages(newMessages);
+          dispatch(setCurrentMessages(newMessages));
           break;
         }
 
@@ -290,7 +241,7 @@ export default function ChatPage() {
         assistantMessage.content += text;
 
         newMessages = [...updatedMessages, { ...assistantMessage }];
-        setCurrentMessages(newMessages);
+        dispatch(setCurrentMessages(newMessages));
       }
 
       if (!chatId) throw new Error("No current chat ID");
@@ -306,7 +257,7 @@ export default function ChatPage() {
     <div className={styles.chatContainer}>
       <button
         className={styles.menuToggle}
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        onClick={() => dispatch(setIsMobileMenuOpen(!isMobileMenuOpen))}
         aria-label="Toggle menu"
       >
         <IconsProvider iconSize="24px" fill={0} grade={0} weight={400}>
@@ -320,10 +271,7 @@ export default function ChatPage() {
       >
         <ChatHistory
           chats={chats}
-          currentChatId={currentChatId}
-          onChatSelect={handleChatSelect}
           onNewChat={handleNewChat}
-          onDeleteChat={handleDeleteChat}
         />
         <LoginStatus />
       </div>

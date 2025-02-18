@@ -15,7 +15,7 @@ import LoginStatus from "./components/LoginStatus";
 import styles from "./chat.module.css";
 import IconsProvider from "../components/iconsProvider";
 
-import { Message } from "./utils/types";
+import { Message } from "../../types";
 
 const MessageContent = ({
   content,

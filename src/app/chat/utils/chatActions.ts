@@ -1,4 +1,4 @@
-import { Message } from "./types";
+import { Message } from "../../../types";
 import { AppDispatch } from "@/store/store";
 import {
   setIsLoading,

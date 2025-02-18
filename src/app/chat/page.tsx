@@ -111,11 +111,12 @@ export default function ChatPage() {
 
     const resizeObserver = new ResizeObserver(updateMeasurements);
     resizeObserver.observe(messagesContainerRef.current);
-    updateMeasurements(); // Initial measurement
+    updateMeasurements();
+    const messagesContainerRefCurrent = messagesContainerRef.current;
 
     return () => {
-      if (messagesContainerRef.current) {
-        resizeObserver.unobserve(messagesContainerRef.current);
+      if (messagesContainerRefCurrent) {
+        resizeObserver.unobserve(messagesContainerRefCurrent);
       }
       resizeObserver.disconnect();
     };

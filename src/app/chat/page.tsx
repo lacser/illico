@@ -1,10 +1,7 @@
 "use client";
-import { useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useEffect, useLayoutEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  setCurrentChatId,
-  setChats,
   setCurrentMessages,
 } from "@/store/slices/chatSlice";
 import { setIsMobileMenuOpen, setMessagesContainerMeasurements } from "@/store/slices/uiSlice";
@@ -23,27 +20,6 @@ export default function ChatPage() {
   const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-
-  const loadChats = useCallback(async () => {
-    try {
-      const response = await fetch("/api/chats");
-      if (response.status === 401) {
-        router.push("/login");
-        return;
-      }
-      if (!response.ok) throw new Error("Failed to fetch chats");
-
-      const data = await response.json();
-      dispatch(setChats(data));
-      if (data.length > 0 && !currentChatId && !isNewChat) {
-        dispatch(setCurrentChatId(null));
-        dispatch(setCurrentMessages([]));
-      }
-    } catch (error) {
-      console.error("Error loading chats:", error);
-    }
-  }, [currentChatId, isNewChat, router, dispatch]);
 
   useEffect(() => {
     if (!isNewChat && currentChatId) {
@@ -58,9 +34,6 @@ export default function ChatPage() {
     }
   }, [currentChatId, chats, isNewChat, dispatch]);
 
-  useEffect(() => {
-    loadChats();
-  }, [loadChats]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

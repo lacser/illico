@@ -60,14 +60,6 @@
   margin: 0.5rem 0;
 }
 
-.content pre code {
-  background-color: transparent;
-  padding: 0;
-  border-radius: 0;
-  display: block;
-  white-space: pre;
-}
-
 .content blockquote {
   margin: 0.5rem 0;
   padding-left: 1rem;
@@ -106,4 +98,112 @@
 
 .content th {
   background-color: var(--md-sys-color-surface-container-highest);
+}
+
+/* Prism.js Syntax Highlighting */
+.content pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+  white-space: pre;
+  font-family: 'GeistMono', monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content pre code {
+    color: #ccc;
+  }
+  .content :global(.token.comment),
+  .content :global(.token.prolog),
+  .content :global(.token.doctype),
+  .content :global(.token.cdata) {
+    color: #8b949e;
+  }
+  .content :global(.token.punctuation) {
+    color: #c9d1d9;
+  }
+  .content :global(.token.property),
+  .content :global(.token.tag),
+  .content :global(.token.boolean),
+  .content :global(.token.number),
+  .content :global(.token.constant),
+  .content :global(.token.symbol) {
+    color: #79c0ff;
+  }
+  .content :global(.token.selector),
+  .content :global(.token.attr-name),
+  .content :global(.token.string),
+  .content :global(.token.char),
+  .content :global(.token.builtin) {
+    color: #a5d6ff;
+  }
+  .content :global(.token.operator),
+  .content :global(.token.entity),
+  .content :global(.token.url),
+  .content :global(.token.variable) {
+    color: #d2a8ff;
+  }
+  .content :global(.token.atrule),
+  .content :global(.token.attr-value),
+  .content :global(.token.keyword) {
+    color: #ff7b72;
+  }
+  .content :global(.token.function),
+  .content :global(.token.class-name) {
+    color: #d2a8ff;
+  }
+  .content :global(.token.regex),
+  .content :global(.token.important) {
+    color: #a5d6ff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .content pre code {
+    color: #24292f;
+  }
+  .content :global(.token.comment),
+  .content :global(.token.prolog),
+  .content :global(.token.doctype),
+  .content :global(.token.cdata) {
+    color: #6e7781;
+  }
+  .content :global(.token.punctuation) {
+    color: #24292f;
+  }
+  .content :global(.token.property),
+  .content :global(.token.tag),
+  .content :global(.token.boolean),
+  .content :global(.token.number),
+  .content :global(.token.constant),
+  .content :global(.token.symbol) {
+    color: #0550ae;
+  }
+  .content :global(.token.selector),
+  .content :global(.token.attr-name),
+  .content :global(.token.string),
+  .content :global(.token.char),
+  .content :global(.token.builtin) {
+    color: #0a3069;
+  }
+  .content :global(.token.operator),
+  .content :global(.token.entity),
+  .content :global(.token.url),
+  .content :global(.token.variable) {
+    color: #8250df;
+  }
+  .content :global(.token.atrule),
+  .content :global(.token.attr-value),
+  .content :global(.token.keyword) {
+    color: #cf222e;
+  }
+  .content :global(.token.function),
+  .content :global(.token.class-name) {
+    color: #8250df;
+  }
+  .content :global(.token.regex),
+  .content :global(.token.important) {
+    color: #0a3069;
+  }
 }

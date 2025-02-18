@@ -62,10 +62,41 @@
 
 .message.user {
   text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .message.assistant {
   text-align: left;
+}
+
+.messageActions {
+  display: flex;
+  gap: 4px;
+  margin-right: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message:hover .messageActions {
+  opacity: 1;
+}
+
+.messageAction {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--md-sys-color-outline);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messageAction:hover {
+  background-color: var(--md-sys-color-surface-container);
 }
 
 .messageBubble {

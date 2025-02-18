@@ -99,6 +99,20 @@ export default function ChatPage() {
                     key={index}
                     className={`${styles.message} ${styles[msg.role]}`}
                   >
+                    {msg.role === 'user' && (
+                      <div className={styles.messageActions}>
+                        <button className={styles.messageAction} aria-label="Copy message">
+                          <IconsProvider iconSize="20px">
+                            content_copy
+                          </IconsProvider>
+                        </button>
+                        <button className={styles.messageAction} aria-label="Edit message">
+                          <IconsProvider iconSize="20px">
+                            edit
+                          </IconsProvider>
+                        </button>
+                      </div>
+                    )}
                     <div className={styles.messageBubble}>
                       <MessageContent
                         content={msg.content}

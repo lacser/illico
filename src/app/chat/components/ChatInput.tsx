@@ -1,21 +1,24 @@
 "use client";
 import { useState, useRef } from "react";
 import styles from "./ChatInput.module.css";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { useRouter } from "next/navigation";
 import IconsProvider from "../../components/iconsProvider";
+import { handleSubmit } from "../utils/chatActions";
 
 interface ChatInputProps {
-  onSubmit: (text: string) => void;
   showShadow?: boolean;
 }
 
 export default function ChatInput({
-  onSubmit,
   showShadow,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { isLoading } = useAppSelector((state) => state.chat);
+  const dispatch = useAppDispatch();
+  const { isLoading, currentChatId, isNewChat, currentMessages } = useAppSelector(
+    (state) => state.chat
+  );
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -38,15 +41,27 @@ export default function ChatInput({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const wsRef = useRef<WebSocket | null>(null);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-    onSubmit(input.trim());
+    handleSubmit(
+      input.trim(),
+      isLoading,
+      currentChatId,
+      isNewChat,
+      currentMessages,
+      dispatch,
+      router,
+      wsRef
+    );
     setInput("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.inputForm}>
+    <form onSubmit={handleFormSubmit} className={styles.inputForm}>
       <div className={`${styles.inputWrapper} ${showShadow ? styles.showShadow : ""}`}>
         <textarea
           wrap="hard"

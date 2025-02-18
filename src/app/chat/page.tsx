@@ -5,12 +5,8 @@ import ChatInput from "./components/ChatInput";
 import Markdown from "markdown-to-jsx";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  setIsLoading,
-  setIsNewChat,
   setCurrentChatId,
   setChats,
-  addChat,
-  updateChat,
   setCurrentMessages,
 } from "@/store/slices/chatSlice";
 import { setIsMobileMenuOpen } from "@/store/slices/uiSlice";
@@ -19,11 +15,7 @@ import LoginStatus from "./components/LoginStatus";
 import styles from "./chat.module.css";
 import IconsProvider from "../components/iconsProvider";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-  isComplete?: boolean;
-}
+import { Message } from "./utils/types";
 
 const MessageContent = ({
   content,
@@ -56,12 +48,11 @@ const MessageContent = ({
 
 export default function ChatPage() {
   const dispatch = useAppDispatch();
-  const { chats, currentChatId, isLoading, isNewChat, currentMessages } = useAppSelector(
+  const { chats, currentChatId, isNewChat, currentMessages } = useAppSelector(
     (state) => state.chat
   );
   const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const wsRef = useRef<WebSocket | null>(null);
   const router = useRouter();
 
   const loadChats = useCallback(async () => {
@@ -103,149 +94,6 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
 
-  const createNewChat = async (firstMessage: Message) => {
-    try {
-      const response = await fetch("/api/chats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: firstMessage.content.substring(0, 30) + "...",
-          messages: [firstMessage],
-        }),
-      });
-
-      if (response.status === 401) {
-        router.push("/login");
-        return null;
-      }
-      if (!response.ok) throw new Error("Failed to create chat");
-
-      const newChat = await response.json();
-      dispatch(addChat(newChat));
-      dispatch(setCurrentChatId(newChat._id));
-      dispatch(setIsNewChat(false));
-      dispatch(setCurrentMessages([{ ...firstMessage, isComplete: true }]));
-      return newChat._id;
-    } catch (error) {
-      console.error("Error creating chat:", error);
-      return null;
-    }
-  };
-
-  const updateCurrentChat = async (chatId: string, messages: Message[]) => {
-    if (!chatId) {
-      console.error("No chat ID provided");
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/chats/${chatId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages,
-          title: messages[0]?.content.substring(0, 30) + "..." || "New Chat",
-        }),
-      });
-
-      if (response.status === 401) {
-        router.push("/login");
-        return;
-      }
-      if (!response.ok) throw new Error("Failed to update chat");
-
-      const updatedChat = await response.json();
-      dispatch(updateChat(updatedChat));
-      dispatch(setCurrentMessages(messages));
-
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(
-          JSON.stringify({
-            chatId,
-            message: messages[messages.length - 1],
-          })
-        );
-      }
-    } catch (error) {
-      console.error("Error updating chat:", error);
-    }
-  };
-
-  const handleSubmit = async (text: string) => {
-    if (!text.trim() || isLoading) return;
-
-    const userMessage: Message = {
-      role: "user",
-      content: text.trim(),
-      isComplete: true,
-    };
-    dispatch(setIsLoading(true));
-
-    try {
-      let chatId = currentChatId;
-      let updatedMessages: Message[] = [];
-
-      if (isNewChat || !chatId) {
-        chatId = await createNewChat(userMessage);
-        if (!chatId) throw new Error("Failed to create new chat");
-        updatedMessages = [userMessage];
-      } else {
-        if (!chatId) throw new Error("No current chat ID");
-        updatedMessages = [...currentMessages, userMessage];
-        await updateCurrentChat(chatId, updatedMessages);
-      }
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: updatedMessages,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch response");
-
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("No reader available");
-
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: "",
-        isComplete: false,
-      };
-
-      let newMessages: Message[] = [...updatedMessages];
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-          assistantMessage.isComplete = true;
-          newMessages = [...updatedMessages, { ...assistantMessage }];
-          dispatch(setCurrentMessages(newMessages));
-          break;
-        }
-
-        const text = new TextDecoder().decode(value);
-        assistantMessage.content += text;
-
-        newMessages = [...updatedMessages, { ...assistantMessage }];
-        dispatch(setCurrentMessages(newMessages));
-      }
-
-      if (!chatId) throw new Error("No current chat ID");
-      await updateCurrentChat(chatId, newMessages);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      dispatch(setIsLoading(false));
-    }
-  };
-
   return (
     <div className={styles.chatContainer}>
       <button
@@ -278,7 +126,7 @@ export default function ChatPage() {
                   className={styles.inputContainerMiddle}
                   style={{ display: currentChatId ? "none" : "" }}
                 >
-                  <ChatInput onSubmit={handleSubmit} />
+                  <ChatInput />
                 </div>
               </div>
             ) : (
@@ -306,7 +154,7 @@ export default function ChatPage() {
           className={styles.inputContainerBottom}
           style={{ display: currentChatId ? "" : "none" }}
         >
-          <ChatInput onSubmit={handleSubmit} showShadow />
+          <ChatInput showShadow />
         </div>
       </div>
     </div>

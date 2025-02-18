@@ -122,12 +122,7 @@ export default function ChatPage() {
             {!currentMessages.length || isNewChat ? (
               <div className={styles.homeInputContainer}>
                 <h1 className={styles.emptyChat}>What can I help with?</h1>
-                <div
-                  className={styles.inputContainerMiddle}
-                  style={{ display: currentChatId ? "none" : "" }}
-                >
-                  <ChatInput />
-                </div>
+                <ChatInput display={!currentChatId} />
               </div>
             ) : (
               <div className={styles.messages}>
@@ -150,12 +145,7 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <div
-          className={styles.inputContainerBottom}
-          style={{ display: currentChatId ? "" : "none" }}
-        >
-          <ChatInput showShadow />
-        </div>
+        <ChatInput showShadow display={!!currentChatId} />
       </div>
     </div>
   );

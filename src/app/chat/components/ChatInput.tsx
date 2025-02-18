@@ -8,10 +8,12 @@ import { handleSubmit } from "../utils/chatActions";
 
 interface ChatInputProps {
   showShadow?: boolean;
+  display?: boolean;
 }
 
 export default function ChatInput({
   showShadow,
+  display = true,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -19,6 +21,10 @@ export default function ChatInput({
   const { isLoading, currentChatId, isNewChat, currentMessages } = useAppSelector(
     (state) => state.chat
   );
+  const router = useRouter();
+  const wsRef = useRef<WebSocket | null>(null);
+
+  if (!display) return null;
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -40,9 +46,6 @@ export default function ChatInput({
       }
     }
   };
-
-  const router = useRouter();
-  const wsRef = useRef<WebSocket | null>(null);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();

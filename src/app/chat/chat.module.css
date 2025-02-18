@@ -202,20 +202,6 @@
   background-color: var(--md-sys-color-surface-container-highest);
 }
 
-.inputContainerMiddle {
-  margin: 0 80px;
-  background-color: none;
-}
-
-.inputContainerBottom {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  width: 80%;
-  transform: translateX(-50%);
-  background-color: none;
-}
-
 .menuToggle {
   display: none;
   position: absolute;
@@ -270,16 +256,6 @@
     font-size: 1.75rem;
     margin-top: calc(90vh / 2 - 6rem);
   }
-
-  .inputContainerMiddle,
-  .inputContainerBottom {
-    margin: 0 15px;
-    width: calc(100% - 30px);
-  }
-
-  .inputContainerBottom {
-    bottom: 15px;
-  }
 }
 
 /* Small mobile devices */
@@ -295,15 +271,5 @@
   .messageBubble {
     max-width: 90%;
     padding: 0.625rem 0.875rem;
-  }
-
-  .inputContainerMiddle,
-  .inputContainerBottom {
-    margin: 0 10px;
-    width: calc(100% - 25px);
-  }
-
-  .inputContainerBottom {
-    transform: translateX(-52%);
   }
 }

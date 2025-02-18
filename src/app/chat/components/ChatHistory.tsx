@@ -25,12 +25,10 @@ interface Chat {
 
 interface ChatHistoryProps {
   chats: Chat[];
-  onNewChat: () => void;
 }
 
 export default function ChatHistory({
-  chats,
-  onNewChat,
+  chats
 }: ChatHistoryProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -50,10 +48,17 @@ export default function ChatHistory({
     dispatch(setIsMobileMenuOpen(false));
   };
 
+  const handleNewChat = () => {
+    dispatch(setCurrentChatId(null));
+    dispatch(setIsNewChat(true));
+    dispatch(setCurrentMessages([]));
+    dispatch(setIsMobileMenuOpen(false));
+  };
+
   return (
     <div className={Styles.chatHistory}>
       <div className={Styles.sidePanelOptionsContainer}>
-        <button onClick={onNewChat} className={Styles.newChatButton}>
+        <button onClick={handleNewChat} className={Styles.newChatButton}>
           <IconsProvider iconSize="24px" fill={0} grade={0} weight={400} color="var(--md-sys-color-outline)">
             maps_ugc
           </IconsProvider>

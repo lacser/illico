@@ -103,13 +103,6 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
 
-  const handleNewChat = () => {
-    dispatch(setCurrentChatId(null));
-    dispatch(setIsNewChat(true));
-    dispatch(setCurrentMessages([]));
-    dispatch(setIsMobileMenuOpen(false));
-  };
-
   const createNewChat = async (firstMessage: Message) => {
     try {
       const response = await fetch("/api/chats", {
@@ -271,7 +264,6 @@ export default function ChatPage() {
       >
         <ChatHistory
           chats={chats}
-          onNewChat={handleNewChat}
         />
         <LoginStatus />
       </div>

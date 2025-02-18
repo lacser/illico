@@ -63,7 +63,7 @@ export default function ChatHistory({
               className={Styles.deleteButton}
               title="Delete chat"
             >
-              <IconsProvider iconSize="18px" fill={0} grade={0} weight={400} classname={Styles.deleteIcon}>
+              <IconsProvider iconSize="20px" fill={0} grade={0} weight={400} classname={Styles.deleteIcon}>
                 delete
               </IconsProvider>
             </button>

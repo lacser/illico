@@ -4,35 +4,45 @@
 }
 
 .inputWrapper {
+  position: relative;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 1.2rem;
+  background-color: var(--md-sys-color-surface-container);
+  /* box-shadow: var(--md-sys-chat-input-shadow); */
+  border: 1px solid var(--md-sys-color-outline);
+  transition: all 0.2s ease;
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputWrapper.showShadow {
+  box-shadow: 0 0 20px 20px var(--md-sys-color-surface);
+  transition: all 0.5s ease;
+}
+
+.inputWrapper:focus-within {
+  box-shadow: 0 0 2px 1.5px var(--md-sys-color-primary-shadow);
 }
 
 .chatInput {
-  flex: 1;
   overflow: hidden;
   resize: none;
-  padding: 1rem;
+  padding: 0;
+  margin: 0.4rem 0.4rem 0;
   line-height: 1.2rem;
   font-size: 1rem;
   font-family: "Noto Sans", "Noto Sans SC", sans-serif;
   border: none;
-  border-radius: 1rem;
-  box-shadow: var(--md-sys-chat-input-shadow);
-  /* background-color: var(--md-sys-color-secondary-container); */
+  background: transparent;
   color: var(--md-sys-color-on-surface);
+  outline: none;
   transition: all 0.2s ease;
 }
 
-.chatInput:focus {
-  outline: none;
-  box-shadow: 0 0 2px 1.5px var(--md-sys-color-primary-shadow);
-  background-color: var(--md-sys-color-surface-container-low);
-}
-
 .chatInput:disabled {
-  background-color: var(--md-sys-color-surface-container);
+  background-color: transparent;
   cursor: not-allowed;
 }
 
@@ -40,64 +50,59 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
-.chatInput.bottomShadow {
-  box-shadow: 0 0 20px 20px var(--md-sys-color-surface);
-  transition: all 0.5s ease;
-}
 
 .sendButton {
-  width: 3rem;
-  height: 3rem;
+  align-self: flex-end;
+  width: 2.4rem;
+  height: 2.4rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--md-sys-color-on-primary);
-  border-radius: 1.5rem;
-  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary);
+  border-radius: 1.25rem;
+  background-color: var(--md-sys-color-tertiary);
   border: none;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: var(--md-sys-elevation-level1);
 }
 
 .sendButton:hover:not(:disabled) {
   filter: brightness(0.9);
-  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .sendButton:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--md-sys-color-surface), 0 0 0 4px var(--md-sys-color-primary);
+  box-shadow: 0 0 0 2px var(--md-sys-color-primary);
 }
 
 .sendButton:disabled {
-  background-color: var(--md-sys-color-surface-container-highest);
-  color: var(--md-sys-color-on-surface-variant);
+  background-color: var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-outline);
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 @media (max-width: 768px) {
+  .inputWrapper {
+    padding: 0.75rem;
+  }
+
   .chatInput {
-    padding: 1.25rem;
     font-size: 0.95rem;
   }
 
   .sendButton {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .sendButton svg {
-    width: 20px;
-    height: 20px;
+    width: 2.25rem;
+    height: 2.25rem;
   }
 }
 
 @media (max-width: 480px) {
+  .inputWrapper {
+    padding: 0.75rem;
+  }
+
   .chatInput {
-    padding: 1rem;
     font-size: 0.9rem;
   }
 }

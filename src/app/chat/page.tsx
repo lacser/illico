@@ -366,7 +366,7 @@ export default function ChatPage() {
           className={styles.inputContainerBottom}
           style={{ display: currentChatId ? "" : "none" }}
         >
-          <ChatInput onSubmit={handleSubmit} hasBottomShadow />
+          <ChatInput onSubmit={handleSubmit} showShadow />
         </div>
       </div>
     </div>

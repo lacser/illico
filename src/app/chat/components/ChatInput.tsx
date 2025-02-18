@@ -6,12 +6,12 @@ import IconsProvider from "../../components/iconsProvider";
 
 interface ChatInputProps {
   onSubmit: (text: string) => void;
-  hasBottomShadow?: boolean;
+  showShadow?: boolean;
 }
 
 export default function ChatInput({
   onSubmit,
-  hasBottomShadow,
+  showShadow,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -26,13 +26,13 @@ export default function ChatInput({
       const REM = parseFloat(fontSize);
 
       textarea.style.height = "auto";
-      textarea.style.height = `${
-        textarea.scrollHeight > 5.6 * REM ? 5.6 * REM : textarea.scrollHeight
-      }px`;
-
-      if (textarea.scrollHeight >= 6 * REM) {
+      if (textarea.scrollHeight > 10 * REM) {
+        textarea.style.height = `${10 * REM}px`;
+        textarea.style.margin = "0";
         textarea.style.overflow = "auto";
       } else {
+        textarea.style.height = `${textarea.scrollHeight}px`;
+        textarea.style.margin = "0.4rem 0.4rem 0";
         textarea.style.overflow = "hidden";
       }
     }
@@ -47,7 +47,7 @@ export default function ChatInput({
 
   return (
     <form onSubmit={handleSubmit} className={styles.inputForm}>
-      <div className={styles.inputWrapper}>
+      <div className={`${styles.inputWrapper} ${showShadow ? styles.showShadow : ""}`}>
         <textarea
           wrap="hard"
           ref={inputRef}
@@ -55,15 +55,13 @@ export default function ChatInput({
           value={input}
           onChange={handleInput}
           placeholder="Send a message"
-          className={`${styles.chatInput} ${
-            hasBottomShadow ? styles.bottomShadow : ""
-          }`}
+          className={styles.chatInput}
           disabled={isLoading}
         />
         <button
           type="submit"
           className={styles.sendButton}
-          disabled={isLoading}
+          disabled={isLoading || !input.trim()}
         >
           <IconsProvider iconSize="24px" fill={0} grade={0} weight={400}>
             arrow_upward

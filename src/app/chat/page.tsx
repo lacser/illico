@@ -120,7 +120,7 @@ export default function ChatPage() {
         <div className={styles.messagesContainer}>
           <div className={styles.messagesWrapper}>
             {!currentMessages.length || isNewChat ? (
-              <div>
+              <div className={styles.homeInputContainer}>
                 <h1 className={styles.emptyChat}>What can I help with?</h1>
                 <div
                   className={styles.inputContainerMiddle}

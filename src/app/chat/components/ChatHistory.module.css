@@ -22,7 +22,7 @@
 }
 
 .newChatButton:hover {
-  background-color: var(--md-sys-color-surface-container);
+  background-color: var(--md-sys-color-secondary-container);
 }
 
 .chatList {

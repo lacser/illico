@@ -38,6 +38,12 @@
   margin: 0 auto;
 }
 
+.homeInputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .emptyChat {
   text-align: center;
   font-size: 2.25rem;
@@ -47,7 +53,7 @@
 }
 
 .messages {
-  margin-bottom: 80px;
+  margin-bottom: 140px;
 }
 
 .message {

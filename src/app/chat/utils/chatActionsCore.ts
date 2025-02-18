@@ -123,11 +123,11 @@ export const handleSubmit = async (
         messages: updatedMessages,
       }),
     });
-
     if (!response.ok) throw new Error("Failed to fetch response");
 
     const reader = response.body?.getReader();
     if (!reader) throw new Error("No reader available");
+    const TextDecoder = new window.TextDecoder("utf-8");
 
     const assistantMessage: Message = {
       role: "assistant",
@@ -145,7 +145,7 @@ export const handleSubmit = async (
         break;
       }
 
-      const text = new TextDecoder().decode(value);
+      const text = TextDecoder.decode(value);
       assistantMessage.content += text;
 
       newMessages = [...updatedMessages, { ...assistantMessage }];

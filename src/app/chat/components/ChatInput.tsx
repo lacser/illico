@@ -4,7 +4,7 @@ import styles from "./ChatInput.module.css";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import IconsProvider from "../../components/iconsProvider";
-import { handleSubmit } from "../utils/chatActions";
+import { handleSubmit } from "../utils/chatActionsCore";
 
 interface ChatInputProps {
   showShadow?: boolean;

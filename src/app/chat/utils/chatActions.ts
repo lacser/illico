@@ -15,7 +15,6 @@ export const updateCurrentChat = async (
   messages: Message[],
   dispatch: AppDispatch,
   router: AppRouterInstance,
-  wsRef: React.RefObject<WebSocket>
 ) => {
   if (!chatId) {
     console.error("No chat ID provided");
@@ -43,15 +42,6 @@ export const updateCurrentChat = async (
     const updatedChat = await response.json();
     dispatch(updateChat(updatedChat));
     dispatch(setCurrentMessages(messages));
-
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(
-        JSON.stringify({
-          chatId,
-          message: messages[messages.length - 1],
-        })
-      );
-    }
   } catch (error) {
     console.error("Error updating chat:", error);
   }
@@ -99,8 +89,7 @@ export const handleSubmit = async (
   isNewChat: boolean,
   currentMessages: Message[],
   dispatch: AppDispatch,
-  router: AppRouterInstance,
-  wsRef: React.RefObject<WebSocket>
+  router: AppRouterInstance
 ) => {
   if (!text.trim() || isLoading) return;
 
@@ -122,7 +111,7 @@ export const handleSubmit = async (
     } else {
       if (!chatId) throw new Error("No current chat ID");
       updatedMessages = [...currentMessages, userMessage];
-      await updateCurrentChat(chatId, updatedMessages, dispatch, router, wsRef);
+      await updateCurrentChat(chatId, updatedMessages, dispatch, router);
     }
 
     const response = await fetch("/api/chat", {
@@ -164,7 +153,7 @@ export const handleSubmit = async (
     }
 
     if (!chatId) throw new Error("No current chat ID");
-    await updateCurrentChat(chatId, newMessages, dispatch, router, wsRef);
+    await updateCurrentChat(chatId, newMessages, dispatch, router);
   } catch (error) {
     console.error("Error:", error);
   } finally {

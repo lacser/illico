@@ -22,7 +22,6 @@ export default function ChatInput({
     (state) => state.chat
   );
   const router = useRouter();
-  const wsRef = useRef<WebSocket | null>(null);
 
   if (!display) return null;
 
@@ -57,8 +56,7 @@ export default function ChatInput({
       isNewChat,
       currentMessages,
       dispatch,
-      router,
-      wsRef
+      router
     );
     setInput("");
   };

@@ -85,19 +85,16 @@
   font-weight: 500;
   color: var(--md-sys-color-on-primary);
   background-color: var(--md-sys-color-primary);
-  box-shadow: var(--md-sys-elevation-level1);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .submitButton:hover {
-  box-shadow: var(--md-sys-elevation-level2);
   filter: brightness(1.1);
 }
 
 .submitButton:focus {
   outline: none;
-  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .registerLink {

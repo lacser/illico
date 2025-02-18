@@ -1,6 +1,5 @@
 :root {
   --md-sys-color-primary: rgb(76 102 43);
-  --md-sys-color-primary-shadow: rgba(76, 102, 43, 0.3);
   --md-sys-color-surface-tint: rgb(76 102 43);
   --md-sys-color-on-primary: rgb(255 255 255);
   --md-sys-color-primary-container: rgb(205 237 163);
@@ -49,18 +48,16 @@
   --md-sys-color-surface-container: rgb(238 239 227);
   --md-sys-color-surface-container-high: rgb(232 233 222);
   --md-sys-color-surface-container-highest: rgb(226 227 216);
+
+  /* Shadows */
+  --md-sys-color-primary-shadow: rgba(76, 102, 43, 0.3);
+  --md-sys-account-avatar-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   --md-sys-chat-input-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  --md-sys-elevation-level1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level2: 0 2px 4px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level3: 0 3px 6px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level4: 0 4px 8px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level5: 0 6px 12px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --md-sys-color-primary: rgb(177 209 138);
-    --md-sys-color-primary-shadow: rgba(177, 209, 138, 0.3);
     --md-sys-color-surface-tint: rgb(177 209 138);
     --md-sys-color-on-primary: rgb(31 55 1);
     --md-sys-color-primary-container: rgb(53 78 22);
@@ -109,6 +106,11 @@
     --md-sys-color-surface-container: rgb(30 32 26);
     --md-sys-color-surface-container-high: rgb(40 43 36);
     --md-sys-color-surface-container-highest: rgb(51 54 46);
+
+    /* Shadows */
+    --md-sys-color-primary-shadow: rgba(177, 209, 138, 0.3);
+    --md-sys-account-avatar-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    --md-sys-chat-input-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   }
 }
 

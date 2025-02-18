@@ -143,7 +143,6 @@
 
 .submitButton:hover {
   filter: brightness(1.1);
-  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .submitButton:focus {

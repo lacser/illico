@@ -1,11 +1,12 @@
 .loginStatus {
     padding: 0.75rem;
     margin: 0 1rem 1rem 1rem;
+    border-radius: 1rem;
+    transition: background-color 0.2s ease;
 }
 
 .loginStatus:hover {
-    background-color: var(--md-sys-color-surface-container);
-    border-radius: 1rem;
+    background-color: var(--md-sys-color-surface-container-highest);
 }
 
 .loginStatusContainer {
@@ -26,7 +27,7 @@
     height: 2rem;
     border-radius: 9999px;
     overflow: hidden;
-    box-shadow: var(--md-sys-elevation-level2);
+    box-shadow: var(--md-sys-account-avatar-shadow);
 }
 
 .avatarFallback {

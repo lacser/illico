@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
-import Markdown from "markdown-to-jsx";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   setCurrentChatId,
@@ -13,37 +12,8 @@ import ChatHistory from "./components/ChatHistory";
 import LoginStatus from "./components/LoginStatus";
 import styles from "./chat.module.css";
 import IconsProvider from "../components/iconsProvider";
-
+import MessageContent from "./components/MessageContent";
 import { Message } from "../../types";
-
-const MessageContent = ({
-  content,
-  isComplete,
-}: {
-  content: string;
-  isComplete?: boolean;
-}) => {
-  if (!isComplete) {
-    return <div className={styles.streamingContent}>{content}</div>;
-  }
-
-  return (
-    <Markdown
-      options={{
-        forceBlock: true,
-        overrides: {
-          code: {
-            props: {
-              className: styles.code,
-            },
-          },
-        },
-      }}
-    >
-      {content}
-    </Markdown>
-  );
-};
 
 export default function ChatPage() {
   const dispatch = useAppDispatch();

@@ -108,7 +108,7 @@ export default function ChatPage() {
           isMobileMenuOpen ? styles.open : ""
         }`}
       >
-        <ChatHistory chats={chats} />
+        <ChatHistory />
         <LoginStatus />
       </div>
 

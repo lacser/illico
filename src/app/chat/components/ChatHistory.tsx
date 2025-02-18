@@ -10,29 +10,14 @@ import {
   setCurrentMessages,
 } from "@/store/slices/chatSlice";
 import { setIsMobileMenuOpen } from "@/store/slices/uiSlice";
+import { Chat } from "../../../types";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
 
-interface Chat {
-  _id: string;
-  title: string;
-  messages: Message[];
-  createdAt: string;
-}
-
-interface ChatHistoryProps {
-  chats: Chat[];
-}
-
-export default function ChatHistory({
-  chats
-}: ChatHistoryProps) {
+export default function ChatHistory() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentChatId = useAppSelector((state) => state.chat.currentChatId);
+  const chats = useAppSelector((state) => state.chat.chats);
 
   const handleDelete = async (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();

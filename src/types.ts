@@ -3,3 +3,10 @@ export interface Message {
   content: string;
   isComplete?: boolean;
 }
+
+export interface Chat {
+  _id: string;
+  title: string;
+  messages: Message[];
+  createdAt: string;
+}

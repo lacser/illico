@@ -29,7 +29,7 @@ export const updateCurrentChat = async (
       },
       body: JSON.stringify({
         messages,
-        title: messages[0]?.content.substring(0, 30) + "..." || "New Chat",
+        title: messages[0]?.content.substring(0, 30) || "New Chat",
       }),
     });
 
@@ -59,7 +59,7 @@ const createNewChat = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: firstMessage.content.substring(0, 30) + "...",
+        title: firstMessage.content.substring(0, 30),
         messages: [firstMessage],
       }),
     });

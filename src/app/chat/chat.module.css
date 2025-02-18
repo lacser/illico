@@ -258,7 +258,6 @@
   }
 }
 
-/* Small mobile devices */
 @media (max-width: 480px) {
   .leftSidePanel {
     width: 100%;

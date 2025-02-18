@@ -1,7 +1,6 @@
 "use client";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
-import ChatInput from "./components/ChatInput";
 import Markdown from "markdown-to-jsx";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -9,7 +8,7 @@ import {
   setChats,
   setCurrentMessages,
 } from "@/store/slices/chatSlice";
-import { setIsMobileMenuOpen } from "@/store/slices/uiSlice";
+import { setIsMobileMenuOpen, setMessagesContainerMeasurements } from "@/store/slices/uiSlice";
 import ChatHistory from "./components/ChatHistory";
 import LoginStatus from "./components/LoginStatus";
 import styles from "./chat.module.css";
@@ -53,6 +52,7 @@ export default function ChatPage() {
   );
   const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const loadChats = useCallback(async () => {
@@ -79,9 +79,11 @@ export default function ChatPage() {
     if (!isNewChat && currentChatId) {
       const chat = chats.find((c) => c._id === currentChatId);
       if (chat) {
-        dispatch(setCurrentMessages(
-          chat.messages.map((msg) => ({ ...msg, isComplete: true }))
-        ));
+        dispatch(
+          setCurrentMessages(
+            chat.messages.map((msg) => ({ ...msg, isComplete: true }))
+          )
+        );
       }
     }
   }, [currentChatId, chats, isNewChat, dispatch]);
@@ -93,6 +95,31 @@ export default function ChatPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
+
+  useLayoutEffect(() => {
+    if (!messagesContainerRef.current) return;
+
+    const updateMeasurements = () => {
+      const rect = messagesContainerRef.current?.getBoundingClientRect();
+      if (rect) {
+        dispatch(setMessagesContainerMeasurements({
+          left: rect.left,
+          width: rect.width,
+        }));
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(updateMeasurements);
+    resizeObserver.observe(messagesContainerRef.current);
+    updateMeasurements(); // Initial measurement
+
+    return () => {
+      if (messagesContainerRef.current) {
+        resizeObserver.unobserve(messagesContainerRef.current);
+      }
+      resizeObserver.disconnect();
+    };
+  }, [dispatch]);
 
   return (
     <div className={styles.chatContainer}>
@@ -110,19 +137,16 @@ export default function ChatPage() {
           isMobileMenuOpen ? styles.open : ""
         }`}
       >
-        <ChatHistory
-          chats={chats}
-        />
+        <ChatHistory chats={chats} />
         <LoginStatus />
       </div>
 
       <div className={styles.chatMain}>
-        <div className={styles.messagesContainer}>
+        <div ref={messagesContainerRef} className={styles.messagesContainer}>
           <div className={styles.messagesWrapper}>
             {!currentMessages.length || isNewChat ? (
               <div className={styles.homeInputContainer}>
                 <h1 className={styles.emptyChat}>What can I help with?</h1>
-                <ChatInput display={!currentChatId} />
               </div>
             ) : (
               <div className={styles.messages}>
@@ -144,8 +168,6 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
         </div>
-
-        <ChatInput showShadow display={!!currentChatId} />
       </div>
     </div>
   );

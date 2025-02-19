@@ -53,6 +53,7 @@
   --md-sys-color-primary-shadow: rgba(76, 102, 43, 0.3);
   --md-sys-account-avatar-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   --md-sys-chat-input-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  --md-sys-tooltip-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -111,6 +112,7 @@
     --md-sys-color-primary-shadow: rgba(177, 209, 138, 0.3);
     --md-sys-account-avatar-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     --md-sys-chat-input-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    --md-sys-tooltip-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   }
 }
 

@@ -3,8 +3,9 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setCurrentMessages } from "@/store/slices/chatSlice";
 import styles from "./Messages.module.css";
-import IconsProvider from "../../components/iconsProvider";
 import MessageContent from "./MessageContent";
+import MessageCopyButton from "./MessageCopyButton";
+import MessageEditButton from "./MessageEditButton";
 import { Message } from "../../../types";
 
 export default function Messages() {
@@ -39,16 +40,8 @@ export default function Messages() {
         >
           {msg.role === 'user' && (
             <div className={styles.messageActions}>
-              <button className={styles.messageAction} aria-label="Copy message">
-                <IconsProvider iconSize="20px">
-                  content_copy
-                </IconsProvider>
-              </button>
-              <button className={styles.messageAction} aria-label="Edit message">
-                <IconsProvider iconSize="20px">
-                  edit
-                </IconsProvider>
-              </button>
+              <MessageCopyButton messageContent={msg.content} />
+              <MessageEditButton />
             </div>
           )}
           <div className={styles.messageBubble}>

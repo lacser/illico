@@ -1,0 +1,34 @@
+.messageAction {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--md-sys-color-outline);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.messageAction[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+  box-shadow: var(--md-sys-tooltip-shadow);
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: Outfit, Arial, Helvetica, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.messageAction:hover {
+  background-color: var(--md-sys-color-surface-container);
+}

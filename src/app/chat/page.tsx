@@ -1,38 +1,21 @@
 "use client";
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  setCurrentMessages,
-} from "@/store/slices/chatSlice";
 import { setIsMobileMenuOpen, setMessagesContainerMeasurements } from "@/store/slices/uiSlice";
 import ChatHistory from "./components/ChatHistory";
 import LoginStatus from "./components/LoginStatus";
 import styles from "./chat.module.css";
 import IconsProvider from "../components/iconsProvider";
-import MessageContent from "./components/MessageContent";
-import { Message } from "../../types";
+import Messages from "./components/Messages";
 
 export default function ChatPage() {
   const dispatch = useAppDispatch();
-  const { chats, currentChatId, isNewChat, currentMessages } = useAppSelector(
+  const { isNewChat, currentMessages } = useAppSelector(
     (state) => state.chat
   );
   const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isNewChat && currentChatId) {
-      const chat = chats.find((c) => c._id === currentChatId);
-      if (chat) {
-        dispatch(
-          setCurrentMessages(
-            chat.messages.map((msg) => ({ ...msg, isComplete: true }))
-          )
-        );
-      }
-    }
-  }, [currentChatId, chats, isNewChat, dispatch]);
 
 
   useEffect(() => {
@@ -93,35 +76,7 @@ export default function ChatPage() {
                 <h1 className={styles.emptyChat}>What can I help with?</h1>
               </div>
             ) : (
-              <div className={styles.messages}>
-                {currentMessages.map((msg: Message, index: number) => (
-                  <div
-                    key={index}
-                    className={`${styles.message} ${styles[msg.role]}`}
-                  >
-                    {msg.role === 'user' && (
-                      <div className={styles.messageActions}>
-                        <button className={styles.messageAction} aria-label="Copy message">
-                          <IconsProvider iconSize="20px">
-                            content_copy
-                          </IconsProvider>
-                        </button>
-                        <button className={styles.messageAction} aria-label="Edit message">
-                          <IconsProvider iconSize="20px">
-                            edit
-                          </IconsProvider>
-                        </button>
-                      </div>
-                    )}
-                    <div className={styles.messageBubble}>
-                      <MessageContent
-                        content={msg.content}
-                        isComplete={msg.isComplete}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Messages />
             )}
             <div ref={messagesEndRef} />
           </div>

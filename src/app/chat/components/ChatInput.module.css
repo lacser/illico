@@ -47,6 +47,7 @@
 
 .chatInput::placeholder {
   color: var(--md-sys-color-on-surface-variant);
+  font-family: Outfit, Arial, Helvetica, sans-serif;
 }
 
 

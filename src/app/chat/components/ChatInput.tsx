@@ -25,6 +25,13 @@ export default function ChatInput({
 
   if (!display) return null;
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleFormSubmit(e);
+    }
+  };
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     const textarea = inputRef.current;
@@ -73,6 +80,7 @@ export default function ChatInput({
           placeholder="Send a message"
           className={styles.chatInput}
           disabled={isLoading}
+          onKeyDown={handleKeyDown}
         />
         <button
           type="submit"

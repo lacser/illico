@@ -37,6 +37,13 @@
   max-width: 80%;
 }
 
+.messageEditContainer {
+  display: inline-block;
+  padding: 0;
+  border-radius: 1.5rem;
+  width: 80%;
+}
+
 .message.user .messageBubble {
   background-color: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
